@@ -13,7 +13,7 @@ st.title('Cuyahoga County 2009-2019')
 st.subheader('Click any Column Header to Sort')
 
 # load data into a pandas dataframe
-data = 'db_clean.csv'
+data = 'virtual/db_clean.csv'
 
 df = pd.read_csv(data, index_col=None)
 df['Case Year'] = df['Case Year'].astype(str)
