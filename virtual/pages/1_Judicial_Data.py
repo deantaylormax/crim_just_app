@@ -3,6 +3,7 @@ import numpy as np
 import altair as alt
 import pandas as pd
 from resources import totals, button_mkr
+import random
 
 st.write("JUDICIAL DATA")
 tab1 = 'Total Cases by Judge'
@@ -14,17 +15,18 @@ df = st.session_state.df #gets data from Home
 
 
 with tab1:
-    by_judge = df.groupby('Judge').size().reset_index(name='Total Cases')
-    options = st.multiselect(
+    by_judge = df.groupby(['Judge', 'Case Year']).size().reset_index(name='Total Cases')
+    judge_sel = st.selectbox(
     'Choose',
     by_judge.Judge.unique())
     # st.write('You selected:', options)
-    judge_filter = by_judge[by_judge.Judge.isin(options)]
-    judge_filter.sort_values(by='Total Cases', ascending=False, inplace=True)
-    st.write(judge_filter)
+    judge_filter = by_judge[by_judge.Judge == judge_sel]
+    total_cases = sum(judge_filter['Total Cases'])
+    judge_filter.sort_values(by='Case Year', ascending=False, inplace=True)
+    # st.write(judge_filter)
 
     chart = alt.Chart(judge_filter).mark_bar().encode(
-        x=alt.X('Judge', sort=alt.EncodingSortField(field='Total_Cases', order='descending')),
+        x=alt.X('Case Year', sort=alt.EncodingSortField(field='Total_Cases', order='descending')),
         y='Total Cases'
     )
 
@@ -37,6 +39,7 @@ with tab1:
         text='Total Cases'
     )
     # display chart in the app with data labels
+    st.write(f'{total_cases} Total Cases')
     st.altair_chart(chart + text, use_container_width=True)
     btn = button_mkr(judge_filter, key=1)
 
@@ -68,7 +71,9 @@ def charter(df, group_col, count_name, new_col, type='size'):
         text=count_name
     )
     # display chart in the app with data labels
-    return st.altair_chart(chart + text, use_container_width=True)
+    ran_num = random.randint(1, 100)
+    btn = button_mkr(filter, key=ran_num)
+    return st.altair_chart(chart + text, use_container_width=True), btn
     
 with tab2:
     charter(df, 'charge_desc', 'Total', 'Charge')
@@ -83,6 +88,8 @@ with tab3:
     filtered_df = df[(df['Judge'] == judge) & (df['Defense Attorney'] == def_atty)]
     filtered_df.drop(columns=['Judge', 'Defense Attorney'], inplace=True)
     # st.csv_downloader(filtered_df, 'my_data.csv')
+    ran_num = random.randint(1, 100)
+    btn = button_mkr(filtered_df, key=ran_num)
     st.write(filtered_df)
     
 # with tab4:

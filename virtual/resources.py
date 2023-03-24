@@ -45,7 +45,9 @@ def charter(df, group_col, count_name, new_col, type='size'):
         text=count_name
     )
     # display chart in the app with data labels
-    btn = button_mkr(filter)
+    #create random number from 1 to 100
+    ran_num = random.randint(1, 100)
+    btn = button_mkr(filter, key=ran_num)
     return btn, st.altair_chart(chart + text, use_container_width=True), options
 
 
